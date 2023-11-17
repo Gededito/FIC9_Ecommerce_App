@@ -2,11 +2,11 @@ import 'package:fic9_ecommerce_app/common/components/space.dart';
 import 'package:fic9_ecommerce_app/common/constants/colors.dart';
 import 'package:flutter/material.dart';
 
-class CustomDropdown extends StatelessWidget {
-  final String? value;
-  final List<String> items;
+class CustomDropdown<T> extends StatelessWidget {
+  final T value; // generic
+  final List<T> items;
   final String label;
-  final Function(String?)? onChanged;
+  final Function(T?)? onChanged;
 
   const CustomDropdown({
     super.key,
@@ -29,13 +29,13 @@ class CustomDropdown extends StatelessWidget {
           ),
         ),
         const SpaceHeight(12.0),
-        DropdownButtonFormField<String>(
+        DropdownButtonFormField<T>(
           value: value,
           onChanged: onChanged,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
+          items: items.map((T item) {
+            return DropdownMenuItem<T>(
               value: item,
-              child: Text(item),
+              child: Text(item.toString()),
             );
           }).toList(),
           decoration: InputDecoration(

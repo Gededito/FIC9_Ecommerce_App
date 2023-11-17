@@ -8,6 +8,8 @@ class Images {
 
   //icon cart
   static const String iconCart = 'assets/icons/Cart.png';
+  static const String iconBag = 'assets/icons/Bag.png';
+  static const String iconLocation = 'assets/icons/Location.png';
 
   //icon user
   static const String iconUser = 'assets/icons/User.png';
@@ -16,9 +18,6 @@ class Images {
   static const String product2 = 'assets/images/product2.png';
   static const String product3 = 'assets/images/product3.png';
   static const String product4 = 'assets/images/product4.png';
-
-  // AssetGenImage get recomendedProductBanner =>
-  //     const AssetGenImage('assets/images/Recomended Product Banner.png');
 
   static const String recomendedProductBanner =
       'assets/images/RecomendedProductBanner.png';
@@ -38,4 +37,13 @@ class Images {
   //icons.more
   static const String more = 'assets/images/more.png';
   static const String iconTrash = 'assets/icons/Trash.png';
+
+  //icon message
+  static const String iconMessage = 'assets/icons/Message.png';
+
+  //icon password
+  static const String iconPassword = 'assets/icons/Password.png';
+
+  //icon phone
+  static const String iconPhone = 'assets/icons/Phone.png';
 }
