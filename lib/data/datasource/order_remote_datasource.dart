@@ -1,7 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:fic9_ecommerce_app/common/constants/variabels.dart';
 import 'package:fic9_ecommerce_app/data/datasource/auth_local_datasource.dart';
+import 'package:fic9_ecommerce_app/data/model/requests/add_address_request_model.dart';
 import 'package:fic9_ecommerce_app/data/model/requests/order_request_model.dart';
+import 'package:fic9_ecommerce_app/data/model/response/add_address_response_model.dart';
+import 'package:fic9_ecommerce_app/data/model/response/get_address_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/order_detail_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/order_response_model.dart';
 import 'package:http/http.dart' as http;
@@ -39,6 +42,47 @@ class OrderRemoteDatasource {
 
     if (response.statusCode == 200) {
       return right(OrderDetailResponseModel.fromJson(response.body));
+    } else {
+      return left('Server Error');
+    }
+  }
+
+  //Add Address
+  Future<Either<String, AddAddressResponseModel>> addAddress(
+      AddAddressRequestModel request) async {
+    final token = await AuthLocalDatasource().getToken();
+
+    final response = await http.post(
+      Uri.parse('${Variables.baseUrl}/api/addresses'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: request.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      return right(AddAddressResponseModel.fromJson(response.body));
+    } else {
+      return left('Server Error');
+    }
+  }
+
+  //Get Address by user Id
+  Future<Either<String, GetAddressResponseModel>> getAddressByUserId() async {
+    final token = await AuthLocalDatasource().getToken();
+    final user = await AuthLocalDatasource().getUser();
+    final response = await http.get(
+      Uri.parse(
+          '${Variables.baseUrl}/api/addresses?filters[user_id][\$eq]=${user.id}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return right(GetAddressResponseModel.fromJson(response.body));
     } else {
       return left('Server Error');
     }

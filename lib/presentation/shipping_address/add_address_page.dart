@@ -2,7 +2,16 @@ import 'package:fic9_ecommerce_app/common/components/button.dart';
 import 'package:fic9_ecommerce_app/common/components/custom_dropdown.dart';
 import 'package:fic9_ecommerce_app/common/components/custom_text_field2.dart';
 import 'package:fic9_ecommerce_app/common/components/space.dart';
+import 'package:fic9_ecommerce_app/data/datasource/auth_local_datasource.dart';
+import 'package:fic9_ecommerce_app/data/model/response/city_response_model.dart';
+import 'package:fic9_ecommerce_app/data/model/response/province_response_model.dart';
+import 'package:fic9_ecommerce_app/data/model/response/subdistrict_response_model.dart';
+import 'package:fic9_ecommerce_app/presentation/shipping_address/bloc/add_address/add_address_bloc.dart';
+import 'package:fic9_ecommerce_app/presentation/shipping_address/bloc/city/city_bloc.dart';
+import 'package:fic9_ecommerce_app/presentation/shipping_address/bloc/province/province_bloc.dart';
+import 'package:fic9_ecommerce_app/presentation/shipping_address/bloc/subdistrict/subdistrict_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddAddressPage extends StatefulWidget {
   const AddAddressPage({super.key});
@@ -12,26 +21,48 @@ class AddAddressPage extends StatefulWidget {
 }
 
 class _AddAddressPageState extends State<AddAddressPage> {
-  final ValueNotifier<String> selectedCountry =
-      ValueNotifier<String>('Indonesia');
-  final TextEditingController countryController = TextEditingController();
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController provinceController = TextEditingController();
   final TextEditingController zipCodeController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
 
+  bool isDefault = false;
+
+  Province selectedProvince = Province(
+    provinceId: '1',
+    province: 'Bali',
+  );
+
+  City selectedCity = City(
+    cityId: '1',
+    provinceId: '1',
+    province: 'Bali',
+    type: 'Kabupaten',
+    cityName: 'Badung',
+    postalCode: '80351',
+  );
+
+  SubDistrict selectedSubDistrict = SubDistrict(
+    subdistrictId: '1',
+    provinceId: '1',
+    province: 'Bali',
+    cityId: '1',
+    city: 'Badung',
+    type: 'Kabupaten',
+    subdistrictName: 'Kuta',
+  );
+
+  @override
+  void initState() {
+    // BlocProvider.of<ProvinceBloc>(context).add(const ProvinceEvent.getAll());
+    context.read<ProvinceBloc>().add(const ProvinceEvent.getAll());
+    super.initState();
+  }
+
   @override
   void dispose() {
-    selectedCountry.dispose();
-    countryController.dispose();
-    firstNameController.dispose();
-    lastNameController.dispose();
+    nameController.dispose();
     addressController.dispose();
-    cityController.dispose();
-    provinceController.dispose();
     zipCodeController.dispose();
     phoneNumberController.dispose();
     super.dispose();
@@ -46,39 +77,120 @@ class _AddAddressPageState extends State<AddAddressPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ValueListenableBuilder(
-            valueListenable: selectedCountry,
-            builder: (context, value, _) => CustomDropdown(
-              value: value,
-              items: const ['Indonesia', 'Inggris'],
-              label: 'Negara atau Wilayah',
-              onChanged: (value) => selectedCountry.value = value!,
-            ),
-          ),
           const SpaceHeight(24.0),
           CustomTextField2(
-            controller: firstNameController,
-            label: 'Nama Depan',
-          ),
-          const SpaceHeight(24.0),
-          CustomTextField2(
-            controller: lastNameController,
-            label: 'Nama Belakang',
+            controller: nameController,
+            label: 'Nama Lengkap',
+            keyboardType: TextInputType.name,
           ),
           const SpaceHeight(24.0),
           CustomTextField2(
             controller: addressController,
             label: 'Alamat Jalan',
+            maxLines: 3,
+            keyboardType: TextInputType.multiline,
           ),
           const SpaceHeight(24.0),
           CustomTextField2(
-            controller: cityController,
-            label: 'Kota',
+            controller: phoneNumberController,
+            label: 'No Handphone',
+            keyboardType: TextInputType.phone,
           ),
           const SpaceHeight(24.0),
-          CustomTextField2(
-            controller: provinceController,
-            label: 'Provinsi',
+          BlocBuilder<ProvinceBloc, ProvinceState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+                loaded: (provinces) {
+                  selectedProvince = provinces.first;
+                  return CustomDropdown<Province>(
+                    value: selectedProvince,
+                    items: provinces,
+                    label: 'Provinsi',
+                    onChanged: (value) {
+                      setState(() {
+                        selectedProvince = value!;
+                        context.read<CityBloc>().add(
+                              CityEvent.getAllByProvinceId(
+                                selectedProvince.provinceId,
+                              ),
+                            );
+                      });
+                    },
+                  );
+                },
+              );
+            },
+          ),
+          const SpaceHeight(24.0),
+          BlocBuilder<CityBloc, CityState>(
+            builder: (context, state) {
+              return state.maybeWhen(orElse: () {
+                return CustomDropdown(
+                  value: '-',
+                  items: const ['-'],
+                  label: 'Kota/Kabupaten',
+                  onChanged: (value) {},
+                );
+              }, loading: () {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }, loaded: (cities) {
+                selectedCity = cities.first;
+                return CustomDropdown<City>(
+                  value: selectedCity,
+                  items: cities,
+                  label: 'Kota/Kabupaten',
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCity = value!;
+                      context.read<SubdistrictBloc>().add(
+                            SubdistrictEvent.getAllByCityId(
+                                selectedCity.cityId),
+                          );
+                    });
+                  },
+                );
+              });
+            },
+          ),
+          const SpaceHeight(24.0),
+          BlocBuilder<SubdistrictBloc, SubdistrictState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return CustomDropdown(
+                    value: '-',
+                    items: const ['-'],
+                    label: 'Kecamatan',
+                    onChanged: (value) {},
+                  );
+                },
+                loading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+                loaded: (subdistricts) {
+                  selectedSubDistrict = subdistricts.first;
+                  return CustomDropdown<SubDistrict>(
+                    value: selectedSubDistrict,
+                    items: subdistricts,
+                    label: 'Kecamatan',
+                    onChanged: (value) {
+                      setState(() {
+                        selectedSubDistrict = value!;
+                      });
+                    },
+                  );
+                },
+              );
+            },
           ),
           const SpaceHeight(24.0),
           CustomTextField2(
@@ -87,20 +199,67 @@ class _AddAddressPageState extends State<AddAddressPage> {
             keyboardType: TextInputType.number,
           ),
           const SpaceHeight(24.0),
-          CustomTextField2(
-            controller: phoneNumberController,
-            label: 'No Handphone',
-            keyboardType: TextInputType.number,
+          CheckboxListTile(
+            value: isDefault,
+            onChanged: (value) {
+              setState(() {
+                isDefault = value!;
+              });
+            },
+            title: const Text('Simpan sebagai alamat utama'),
           ),
         ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Button.filled(
-          onPressed: () {
-            Navigator.pop(context);
+        child: BlocConsumer<AddAddressBloc, AddAddressState>(
+          listener: (context, state) {
+            state.maybeWhen(
+              orElse: () {},
+              loaded: (response) {
+                Navigator.pop(context, response);
+              },
+            );
           },
-          label: 'Tambah Alamat',
+          builder: (context, state) {
+            return state.maybeWhen(
+              orElse: () {
+                return Button.filled(
+                  onPressed: () async {
+                    // get userID from local storage
+                    final userId = (await AuthLocalDatasource().getUser()).id;
+
+                    context.read<AddAddressBloc>().add(
+                          AddAddressEvent.addAddress(
+                            name: nameController.text,
+                            address: addressController.text,
+                            phone: phoneNumberController.text,
+                            provinceId: selectedProvince.provinceId,
+                            cityId: selectedCity.cityId,
+                            subdistrictId: selectedSubDistrict.subdistrictId,
+                            provinceName: selectedProvince.province,
+                            cityName: selectedCity.cityName,
+                            subdistrictName:
+                                selectedSubDistrict.subdistrictName,
+                            codePos: zipCodeController.text,
+                            userId: userId.toString(),
+                            isDefault: isDefault,
+                          ),
+                        );
+                  },
+                  label: 'Tambah Alamat',
+                );
+              },
+              loading: () {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+              error: (message) {
+                return const SnackBar(content: Text('Error'));
+              },
+            );
+          },
         ),
       ),
     );

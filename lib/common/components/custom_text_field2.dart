@@ -8,6 +8,7 @@ class CustomTextField2 extends StatelessWidget {
   final Function(String value)? onChanged;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final int maxLines;
 
   const CustomTextField2({
     super.key,
@@ -16,6 +17,7 @@ class CustomTextField2 extends StatelessWidget {
     this.onChanged,
     this.obscureText = false,
     this.keyboardType,
+    this.maxLines = 1,
   });
 
   @override
@@ -46,6 +48,7 @@ class CustomTextField2 extends StatelessWidget {
               borderSide: const BorderSide(color: ColorName.grey),
             ),
           ),
+          maxLines: maxLines,
         ),
       ],
     );
