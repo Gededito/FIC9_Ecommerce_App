@@ -4,6 +4,10 @@ import 'package:fic9_ecommerce_app/data/model/response/city_response_model.dart'
 import 'package:fic9_ecommerce_app/data/model/response/cost_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/province_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/subdistrict_response_model.dart';
+
+import 'package:fic9_ecommerce_app/data/model/response/waybill_failed_response_model.dart';
+import 'package:fic9_ecommerce_app/data/model/response/waybill_success_response_model.dart';
+
 import 'package:http/http.dart' as http;
 
 class RajaOngkirRemoteDatasource {
@@ -82,4 +86,30 @@ class RajaOngkirRemoteDatasource {
       return left('Error');
     }
   }
+
+  Future<Either<WaybillFailedResponseModel, WaybillSuccessResponseModel>>
+      getWayBill(
+    String waybill,
+    String courier,
+  ) async {
+    final url = Uri.parse('https://pro.rajaongkir.com/api/waybill');
+    final response = await http.post(
+      url,
+      headers: {
+        'key': Variables.rajaOngkirKey,
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'waybill': waybill,
+        'courier': courier,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return right(WaybillSuccessResponseModel.fromJson(response.body));
+    } else {
+      return left(WaybillFailedResponseModel.fromJson(response.body));
+    }
+  }
+
 }

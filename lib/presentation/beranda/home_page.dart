@@ -164,48 +164,6 @@ class _HomePageState extends State<HomePage> {
           ),
           const SpaceHeight(16.0),
           ImageSlider(items: images),
-          const SpaceHeight(12.0),
-          const Text(
-            "Kategori",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: ColorName.primary,
-            ),
-          ),
-          const SpaceHeight(12.0),
-          Row(
-            children: [
-              Flexible(
-                child: CategoryButton(
-                  imagePath: Images.fashion1,
-                  label: 'Pakaian',
-                  onPressed: () {},
-                ),
-              ),
-              Flexible(
-                child: CategoryButton(
-                  imagePath: Images.fashion2,
-                  label: 'Pakaian',
-                  onPressed: () {},
-                ),
-              ),
-              Flexible(
-                child: CategoryButton(
-                  imagePath: Images.fashion3,
-                  label: 'Pakaian',
-                  onPressed: () {},
-                ),
-              ),
-              Flexible(
-                child: CategoryButton(
-                  imagePath: Images.more,
-                  label: 'Pakaian',
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
           const SpaceHeight(16.0),
           const Text(
             "Produk",

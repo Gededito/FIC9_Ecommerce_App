@@ -17,7 +17,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const Center(child: Text("Explore Page")),
+    // const Center(child: Text("Explore Page")),
     const CartPage(),
     const AccountPage(),
   ];
@@ -42,10 +42,10 @@ class _DashboardPageState extends State<DashboardPage> {
             icon: ImageIcon(AssetImage(Images.iconHome)),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage(Images.iconSearch)),
-            label: 'Explore',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: ImageIcon(AssetImage(Images.iconSearch)),
+          //   label: 'Explore',
+          // ),
           BottomNavigationBarItem(
             icon: ImageIcon(AssetImage(Images.iconCart)),
             label: 'Cart',

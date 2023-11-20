@@ -1,4 +1,10 @@
 import 'package:fic9_ecommerce_app/common/components/space.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/buyer_order/buyer_order_bloc.dart';
+import 'models/transaction_model.dart';
+import 'widgets/order_card.dart';
 import 'package:fic9_ecommerce_app/presentation/order/models/transaction_model.dart';
 import 'package:fic9_ecommerce_app/presentation/order/widgets/order_card.dart';
 import 'package:flutter/material.dart';
@@ -27,16 +33,50 @@ class _OrderPageState extends State<OrderPage> {
   ];
 
   @override
+  void initState() {
+    context.read<BuyerOrderBloc>().add(const BuyerOrderEvent.getBuyerOrder());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pesanan'),
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16.0),
-        separatorBuilder: (context, index) => const SpaceHeight(16.0),
-        itemCount: transactions.length,
-        itemBuilder: (context, index) => OrderCard(data: transactions[index]),
+      body: BlocBuilder<BuyerOrderBloc, BuyerOrderState>(
+        builder: (context, state) {
+          return state.maybeWhen(
+            orElse: () => const SpaceHeight(0.0),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            loaded: (data) {
+              if (data.isEmpty) {
+                return const Center(
+                  child: Text('Tidak ada data'),
+                );
+              }
+              return ListView.separated(
+                padding: const EdgeInsets.all(16.0),
+                separatorBuilder: (context, index) => const SpaceHeight(16.0),
+                itemCount: data.length,
+                itemBuilder: (context, index) => OrderCard(
+                  data: data[index],
+                ),
+              );
+            },
+            error: (message) => Center(
+              child: Text(message),
+            ),
+          );
+          // return ListView.separated(
+          //   padding: const EdgeInsets.all(16.0),
+          //   separatorBuilder: (context, index) => const SpaceHeight(16.0),
+          //   itemCount: transactions.length,
+          //   itemBuilder: (context, index) => OrderCard(
+          //     data: transactions[index],
+          //   ),
+          // );
+        },
       ),
     );
   }
