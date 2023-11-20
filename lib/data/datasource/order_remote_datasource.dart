@@ -4,6 +4,7 @@ import 'package:fic9_ecommerce_app/data/datasource/auth_local_datasource.dart';
 import 'package:fic9_ecommerce_app/data/model/requests/add_address_request_model.dart';
 import 'package:fic9_ecommerce_app/data/model/requests/order_request_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/add_address_response_model.dart';
+import 'package:fic9_ecommerce_app/data/model/response/buyer_order_response.dart';
 import 'package:fic9_ecommerce_app/data/model/response/get_address_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/order_detail_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/order_response_model.dart';
@@ -42,6 +43,27 @@ class OrderRemoteDatasource {
 
     if (response.statusCode == 200) {
       return right(OrderDetailResponseModel.fromJson(response.body));
+    } else {
+      return left('Server Error');
+    }
+  }
+
+  // Order by buyer id
+  Future<Either<String, BuyerOrderResponseModel>> getOrderByBuyerId() async {
+    final token = await AuthLocalDatasource().getToken();
+    final user = await AuthLocalDatasource().getUser();
+
+    final response = await http.get(
+      Uri.parse(
+          '${Variables.baseUrl}/api/orders?filters[buyerId][\$eq]=${user.id}}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return right(BuyerOrderResponseModel.fromJson(response.body));
     } else {
       return left('Server Error');
     }
