@@ -665,6 +665,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
   }) {
     return _then(_$LoadedImpl(
       null == data
+    Object? data = freezed,
+  }) {
+    return _then(_$LoadedImpl(
+      freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as CostResponseModel,
@@ -695,6 +699,13 @@ class _$LoadedImpl implements _Loaded {
 
   @override
   int get hashCode => Object.hash(runtimeType, data);
+            const DeepCollectionEquality().equals(other.data, data));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(data));
+
 
   @JsonKey(ignore: true)
   @override

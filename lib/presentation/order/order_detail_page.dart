@@ -4,15 +4,20 @@ import 'package:fic9_ecommerce_app/common/constants/colors.dart';
 import 'package:fic9_ecommerce_app/common/constants/images.dart';
 import 'package:fic9_ecommerce_app/common/extensions/date_time_ext.dart';
 import 'package:fic9_ecommerce_app/common/extensions/int_ext.dart';
+
 import 'package:fic9_ecommerce_app/data/model/response/buyer_order_response.dart';
+
 import 'package:fic9_ecommerce_app/presentation/order/models/order_product_model.dart';
 import 'package:fic9_ecommerce_app/presentation/order/widgets/order_product_tile.dart';
 import 'package:fic9_ecommerce_app/presentation/order/widgets/order_status.dart';
 import 'package:flutter/material.dart';
 
 class OrderDetailPage extends StatefulWidget {
+
   final BuyerOrder buyerOrder;
   const OrderDetailPage({required this.buyerOrder, super.key});
+
+  const OrderDetailPage({super.key});
 
   @override
   State<OrderDetailPage> createState() => _OrderDetailPageState();
@@ -34,6 +39,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+
     int totalItem = 0;
     int item = 0;
     widget.buyerOrder.attributes.items.forEach((element) {
@@ -94,10 +100,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   value: widget.buyerOrder.attributes.noResi,
                 ),
                 const SpaceHeight(12.0),
-                // const RowText(
-                //   label: 'Alamat',
-                //   value: 'Jalan suka cita no 12',
-                // ),
+                const RowText(
+                  label: 'Ekspedisi Pengiriman',
+                  value: 'JNE Regular',
+                ),
+                const SpaceHeight(12.0),
+                const RowText(
+                  label: 'No. Resi',
+                  value: 'QQNSU346JK',
+                ),
+                const SpaceHeight(12.0),
+                const RowText(
+                  label: 'Alamat',
+                  value: 'Jalan suka cita no 12',
+                ),
               ],
             ),
           ),

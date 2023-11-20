@@ -4,8 +4,10 @@ import 'package:fic9_ecommerce_app/data/model/response/city_response_model.dart'
 import 'package:fic9_ecommerce_app/data/model/response/cost_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/province_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/subdistrict_response_model.dart';
+
 import 'package:fic9_ecommerce_app/data/model/response/waybill_failed_response_model.dart';
 import 'package:fic9_ecommerce_app/data/model/response/waybill_success_response_model.dart';
+
 import 'package:http/http.dart' as http;
 
 class RajaOngkirRemoteDatasource {
@@ -109,4 +111,5 @@ class RajaOngkirRemoteDatasource {
       return left(WaybillFailedResponseModel.fromJson(response.body));
     }
   }
+
 }

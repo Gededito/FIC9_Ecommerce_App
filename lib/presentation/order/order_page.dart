@@ -5,6 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/buyer_order/buyer_order_bloc.dart';
 import 'models/transaction_model.dart';
 import 'widgets/order_card.dart';
+import 'package:fic9_ecommerce_app/presentation/order/models/transaction_model.dart';
+import 'package:fic9_ecommerce_app/presentation/order/widgets/order_card.dart';
+import 'package:flutter/material.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
